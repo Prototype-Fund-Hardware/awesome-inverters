@@ -1,0 +1,60 @@
+name: "✏️ Correct a rating"
+description: Report a wrong, outdated or unverified rating – or confirm an entry marked ❔.
+title: "[Correction] <Inverter name>"
+labels: ["rating correction", "needs triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Ratings change when firmware or integrations change – thank you for keeping the list accurate!
+        Please base your report on **CRITERIA.md** (repository root).
+
+  - type: input
+    id: entry
+    attributes:
+      label: Affected entry
+      description: Name exactly as shown in the list.
+      placeholder: "e.g. EcoFlow PowerStream"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What kind of report is this?
+      options:
+        - "A criterion is rated wrongly"
+        - "Information is outdated (firmware, integration, links)"
+        - "I can confirm an entry marked ❔"
+        - "Other"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: criteria
+    attributes:
+      label: Which criteria are affected?
+      multiple: true
+      options:
+        - "1 – Local operation without cloud"
+        - "2 – Open local interface"
+        - "3 – Open source hardware"
+        - "Metadata (power, balcony, links)"
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: What is wrong, and what is your evidence?
+      description: Links to sources and/or a first-hand report (model, firmware version, how you tested).
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: My evidence is public or reproducible.
+          required: true
+        - label: I disclose any affiliation with a manufacturer, distributor or installer.
+          required: true

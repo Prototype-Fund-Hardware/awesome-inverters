@@ -1,0 +1,59 @@
+name: Validate & build
+
+on:
+  pull_request:
+    paths:
+      - "data/**"
+      - "scripts/**"
+      - "README.md"
+      - "requirements.txt"
+  push:
+    branches: [main]
+    paths:
+      - "data/**"
+      - "scripts/**"
+      - "README.md"
+      - "requirements.txt"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Validate data/inverters.yml
+        run: python scripts/build_readme.py --validate
+
+      - name: Preview generated table (pull requests)
+        if: github.event_name == 'pull_request'
+        run: |
+          echo "## Preview of the generated inverter table" >> "$GITHUB_STEP_SUMMARY"
+          python scripts/build_readme.py --preview >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Regenerate README.md
+        if: github.event_name != 'pull_request'
+        run: python scripts/build_readme.py
+
+      - name: Commit regenerated README.md
+        if: github.event_name != 'pull_request'
+        run: |
+          if git diff --quiet README.md; then
+            echo "README.md is up to date."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          git commit -m "chore: regenerate inverter list [skip ci]"
+          git push

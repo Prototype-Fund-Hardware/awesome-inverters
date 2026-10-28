@@ -1,0 +1,136 @@
+name: "➕ Add an inverter"
+description: Suggest a new inverter or series for the list – no coding required.
+title: "[Add] <Manufacturer> <Model / series>"
+labels: ["new inverter", "needs triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for contributing! Please read **CRITERIA.md** in the repository root first.
+        Every criterion – whether **met or not** – needs a short explanation and, ideally, a public source.
+
+  - type: input
+    id: name
+    attributes:
+      label: Inverter / series name
+      placeholder: "e.g. Hoymiles HMS series"
+    validations:
+      required: true
+
+  - type: input
+    id: manufacturer
+    attributes:
+      label: Manufacturer
+      placeholder: "e.g. Hoymiles"
+    validations:
+      required: true
+
+  - type: input
+    id: models
+    attributes:
+      label: Models covered
+      placeholder: "e.g. HMS-600-2T, HMS-800-2T"
+
+  - type: input
+    id: power
+    attributes:
+      label: Rated AC output
+      placeholder: "e.g. 0.6–0.8 kVA"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: balcony
+    attributes:
+      label: Designed for balcony / plug-in solar?
+      options:
+        - "Yes"
+        - "No"
+        - "Not sure"
+    validations:
+      required: true
+
+  - type: textarea
+    id: ha_docs
+    attributes:
+      label: Home Assistant integration (links)
+      description: Core integration, custom integration (HACS), ESPHome, MQTT … Write "none" if there is none.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: c1
+    attributes:
+      label: "Criterion 1 – Local operation without cloud"
+      description: Keeps working indefinitely with internet access blocked, configurable and monitorable locally.
+      options:
+        - "Met"
+        - "Met, with caveat (e.g. one-time vendor account)"
+        - "Not met"
+        - "Not sure"
+    validations:
+      required: true
+
+  - type: textarea
+    id: c1_evidence
+    attributes:
+      label: Evidence for criterion 1
+      placeholder: Explanation + links. First-hand reports welcome (model, firmware, how you tested).
+    validations:
+      required: true
+
+  - type: dropdown
+    id: c2
+    attributes:
+      label: "Criterion 2 – Open local interface"
+      description: Local data access via a documented or reverse-engineered interface, usable from Home Assistant or similar.
+      options:
+        - "Met"
+        - "Met, with caveat"
+        - "Not met"
+        - "Not sure"
+    validations:
+      required: true
+
+  - type: textarea
+    id: c2_evidence
+    attributes:
+      label: Evidence for criterion 2
+    validations:
+      required: true
+
+  - type: dropdown
+    id: c3
+    attributes:
+      label: "Criterion 3 – Open source hardware"
+      description: Schematics, PCB layout and BOM published under an open license.
+      options:
+        - "Not met"
+        - "Met"
+        - "Not sure"
+    validations:
+      required: true
+
+  - type: textarea
+    id: c3_evidence
+    attributes:
+      label: Evidence for criterion 3
+      description: Required if you selected "Met" – link the design files and their license.
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Additional notes
+      description: Firmware versions, security incidents, warranty conditions, tips for local operation …
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I have read CRITERIA.md.
+          required: true
+        - label: The sources I provided are public.
+          required: true
+        - label: I disclose any affiliation with a manufacturer, distributor or installer in the notes above.
+          required: true

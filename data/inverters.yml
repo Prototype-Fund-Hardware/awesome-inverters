@@ -1,0 +1,782 @@
+# ---------------------------------------------------------------------------
+# Awesome Local Inverters – data source
+#
+# This file is the single source of truth. The inverter table and the rating
+# details in README.md are GENERATED from it by scripts/build_readme.py.
+# Do not edit the generated parts of README.md by hand.
+#
+# Field reference and contribution rules: CONTRIBUTING.md
+# Rating rules:                           CRITERIA.md
+# ---------------------------------------------------------------------------
+
+inverters:
+
+  # ======================= Micro / balcony inverters =======================
+
+  - name: Hoymiles HM series
+    manufacturer: Hoymiles
+    models: HM-300, HM-350, HM-400, HM-600, HM-700, HM-800, HM-1200, HM-1500
+    power: 0.3–1.5 kVA
+    balcony: true
+    ha_docs:
+      - title: OpenDTU
+        url: https://github.com/tbnobody/OpenDTU
+      - title: AhoyDTU
+        url: https://github.com/lumapu/ahoy
+    criteria:
+      local_operation:
+        met: true
+        reason: >-
+          The inverter has no internet connection of its own and feeds in without any gateway.
+          Monitoring, power limiting and switching on/off are handled locally by OpenDTU or AhoyDTU
+          instead of Hoymiles' cloud-bound DTUs.
+      open_interface:
+        met: true
+        reason: >-
+          The proprietary 2.4 GHz radio protocol (nRF24L01+) has been reverse-engineered. OpenDTU and
+          AhoyDTU expose live data via web UI, REST API and MQTT with Home Assistant auto-discovery.
+      open_hardware:
+        met: false
+        reason: No schematics or PCB design files are published.
+    notes: >-
+      The official DTU-Lite/DTU-Pro gateways upload data to the S-Miles cloud. An ESP32 with an nRF24L01+
+      module running OpenDTU or AhoyDTU (approx. €20 in parts) replaces them completely.
+    sources:
+      - https://github.com/tbnobody/OpenDTU
+      - https://raspberry.tips/raspberrypi-tutorials/balkonkraftwerk-photovoltaik-wechselrichter-ertrag-auslesen-esp32-micro-controller-mit-opendtu
+    last_reviewed: "2026-10"
+
+  - name: Hoymiles HMS series
+    manufacturer: Hoymiles
+    models: HMS-300…500-1T, HMS-600…1000-2T, HMS-1600…2000-4T (without "W")
+    power: 0.3–2 kVA
+    balcony: true
+    ha_docs:
+      - title: OpenDTU
+        url: https://github.com/tbnobody/OpenDTU
+      - title: AhoyDTU
+        url: https://github.com/lumapu/ahoy
+    criteria:
+      local_operation:
+        met: true
+        reason: >-
+          No internet connection of its own; feeds in without a gateway. Configuration and monitoring
+          work fully locally via OpenDTU or AhoyDTU.
+      open_interface:
+        met: true
+        reason: >-
+          The sub-GHz radio protocol (CMT2300A) has been reverse-engineered. OpenDTU/AhoyDTU provide MQTT
+          with Home Assistant auto-discovery and a REST API.
+      open_hardware:
+        met: false
+        reason: No schematics or PCB design files are published.
+    notes: >-
+      Requires a DTU board with a CMT2300A radio module (not the nRF24L01+ used for the HM series).
+      The Wi-Fi variants (HMS-xxxW) use a different protocol and are listed separately.
+    sources:
+      - https://github.com/tbnobody/OpenDTU
+      - https://raspberry.tips/raspberrypi-tutorials/balkonkraftwerk-photovoltaik-wechselrichter-ertrag-auslesen-esp32-micro-controller-mit-opendtu
+    last_reviewed: "2026-10"
+
+  - name: Hoymiles HMS-W series (built-in Wi-Fi)
+    manufacturer: Hoymiles
+    models: HMS-400W-1T, HMS-800W-2T and other HMS-xxxW variants
+    power: 0.4–0.8 kVA
+    balcony: true
+    ha_docs:
+      - title: ha-hoymiles-wifi
+        url: https://github.com/suaveolent/ha-hoymiles-wifi
+    criteria:
+      local_operation:
+        met: true
+        reason: >-
+          Feeds in without internet access. Wi-Fi settings, power limit and on/off can be set locally with
+          the open-source hoymiles-wifi library, so the device can run in an isolated network.
+      open_interface:
+        met: true
+        reason: >-
+          The protobuf-based local protocol of the integrated DTU has been reverse-engineered (hoymiles-wifi);
+          a Home Assistant custom integration exists.
+      open_hardware:
+        met: false
+        reason: No schematics or PCB design files are published.
+    caveats:
+      - >-
+        Once connected to Wi-Fi the device uploads to the S-Miles cloud by default – block its internet
+        access at the router/firewall to keep data local.
+      - >-
+        The integration's authors warn against using the power limit for fast zero-export control
+        (EEPROM wear).
+    notes: Not supported by OpenDTU/AhoyDTU, which only handle the radio-based models.
+    sources:
+      - https://github.com/suaveolent/ha-hoymiles-wifi
+      - https://pypi.org/project/hoymiles-wifi
+    last_reviewed: "2026-10"
+
+  - name: APsystems EZ1 series
+    manufacturer: APsystems
+    models: EZ1-M (community reports for further EZ1/EZ1D variants)
+    power: 0.8 kVA (DE setting)
+    balcony: true
+    ha_docs:
+      - title: Home Assistant core integration
+        url: https://www.home-assistant.io/integrations/apsystems/
+    criteria:
+      local_operation:
+        met: true
+        reason: >-
+          With "Local Mode" set to "Continuously", the inverter is queried and controlled over the LAN
+          without the APsystems cloud.
+      open_interface:
+        met: true
+        reason: Official local HTTP API, supported by a Home Assistant core integration.
+      open_hardware:
+        met: false
+        reason: No schematics or PCB design files are published.
+    caveats:
+      - Local Mode has to be enabled once via Bluetooth in the vendor app.
+      - The local API offers no firmware-update endpoint; updates come through the APsystems cloud.
+    sources:
+      - https://www.home-assistant.io/integrations/apsystems/
+      - https://community.home-assistant.io/t/apsystems-ez1-m-ez1-spe-ez1-lv-ez1-h-ez1d-l-ez1d-ez1d-h-community-enhanced-integration-extended-sensors-all-models-overnight-fix-more/994091
+    last_reviewed: "2026-10"
+
+  - name: APsystems DS3 series with ECU gateway
+    manufacturer: APsystems
+    models: DS3-S, DS3-L, DS3, DS3-H with ECU-R / ECU-C / ECU-B
+    power: 0.6–0.96 kVA
+    balcony: true
+    ha_docs:
+      - title: homeassistant-apsystems_ecur
+        url: https://github.com/ksheumaker/homeassistant-apsystems_ecur
+    criteria:
+      local_operation:
+        met: true
+        reason: >-
+          The microinverters talk Zigbee to a local ECU gateway, which can be queried on the LAN without
+          the EMA cloud.
+      open_interface:
+        met: true
+        reason: >-
+          The ECU exposes a local (unofficial, community-documented) socket interface; a Home Assistant
+          custom integration exists.
+      open_hardware:
+        met: false
+        reason: No schematics or PCB design files are published.
+    caveats:
+      - >-
+        APsystems' EMEA warranty terms require the microinverters to be monitored via the EMA portal –
+        check your warranty before cutting the ECU off the internet.
+    notes: DS3-S and DS3-L fit plug-in (balcony) limits; DS3 and DS3-H are mainly used on rooftops.
+    sources:
+      - https://github.com/ksheumaker/homeassistant-apsystems_ecur
+      - https://cdn.estg.eu/p/d/3/b/9/d3b95b662c2731d4319a7d9737d4ccc5e08b2c38_APsystems_DS3_series_Datasheet___FR.pdf
+      - https://solarproof.com.au/datasheets/inv_datasheet_APsystems%20DS3%20Datasheet.pdf
+    last_reviewed: "2026-10"
+
+  - name: Deye microinverters
+    manufacturer: Deye
+    models: SUN600G3, SUN800G3, SUN-M60/M80 G3/G4, SUN2000G3 (4 MPPT); also sold as Bosswerk MI series
+    power: 0.6–2 kVA
+    balcony: true
+    ha_docs:
+      - title: ha-solarman
+        url: https://github.com/davidrapan/ha-solarman
+    criteria:
+      local_operation:
+        met: true
+        reason: >-
+          Runs without internet. The built-in Solarman-type logger can be kept off the cloud by blocking
+          internet access or pointing its server setting to an unused local IP.
+      open_interface:
+        met: true
+        reason: >-
+          The Solarman V5 protocol (TCP 8899, Modbus inside) is reverse-engineered and widely implemented;
+          read and write access via a Home Assistant custom integration.
+      open_hardware:
+        met: false
+        reason: No schematics or PCB design files are published.
+    caveats:
+      - >-
+        The integrated Wi-Fi logger has had security weaknesses (e.g. readable access credentials) –
+        change the access-point password and isolate the device in its own network.
+    notes: >-
+      In November 2024, Deye-branded (hybrid) inverters in the USA, the UK, Pakistan and other countries
+      stopped working; Deye attributed this to a built-in authorization check and denied remote control.
+      Not specific to microinverters, but a strong argument for keeping inverters off the vendor cloud.
+    sources:
+      - https://github.com/davidrapan/ha-solarman
+      - https://borncity.com/blog/?p=286806
+      - https://heise.de/-10183716
+    last_reviewed: "2026-10"
+
+  - name: TSUN TSOL-MS series (Gen3/Gen3Plus)
+    manufacturer: TSUN
+    models: TSOL-MS600/700/800, MS1600/1800/2000, MS3000
+    power: 0.6–3 kVA
+    balcony: true
+    ha_docs:
+      - title: tsun-gen3-proxy
+        url: https://github.com/s-allius/tsun-gen3-proxy
+    criteria:
+      local_operation:
+        met: true
+        reason: >-
+          tsun-gen3-proxy collects data locally and its connection to the TSUN cloud can be switched off;
+          the inverter keeps feeding in.
+      open_interface:
+        met: true
+        reason: >-
+          Reverse-engineered logger protocol; the proxy publishes data to MQTT with Home Assistant
+          auto-discovery.
+      open_hardware:
+        met: false
+        reason: No schematics or PCB design files are published.
+    caveats:
+      - >-
+        Without the cloud connection, no remote firmware or parameter updates are possible. Newer firmware
+        encrypts cloud traffic (TLS), so the proxy must run in "client mode".
+    sources:
+      - https://hub.docker.com/r/sallius/tsun-gen3-proxy
+      - https://community.home-assistant.io/t/tsun-proxy-now-as-add-on/870131
+    last_reviewed: "2026-10"
+
+  - name: Hoymiles HMT series (three-phase)
+    manufacturer: Hoymiles
+    models: HMT-1600/1800/2000-4T, HMT-1800/2250-6T
+    power: 1.6–2.25 kVA
+    balcony: false
+    ha_docs:
+      - title: OpenDTU
+        url: https://github.com/tbnobody/OpenDTU
+    criteria:
+      local_operation:
+        met: true
+        reason: No internet connection of its own; fully locally manageable via OpenDTU.
+      open_interface:
+        met: true
+        reason: Reverse-engineered radio protocol (CMT2300A); MQTT with Home Assistant auto-discovery.
+      open_hardware:
+        met: false
+        reason: No schematics or PCB design files are published.
+    sources:
+      - https://github.com/tbnobody/OpenDTU
+    last_reviewed: "2026-10"
+
+  - name: Enphase IQ microinverters with IQ Gateway
+    manufacturer: Enphase Energy
+    models: IQ7 / IQ8 family with IQ Gateway (Envoy)
+    power: ≈0.25–0.4 kVA per unit
+    balcony: false
+    ha_docs:
+      - title: Home Assistant core integration
+        url: https://www.home-assistant.io/integrations/enphase_envoy/
+    criteria:
+      local_operation:
+        met: false
+        reason: >-
+          Since gateway firmware 7, local API access requires a token issued via an Enphase account; owner
+          tokens expire and can only be renewed online. Commissioning uses the Enphase installer app with
+          an account.
+      open_interface:
+        met: true
+        reason: >-
+          Local HTTP API on the IQ Gateway (token-protected), supported by a Home Assistant core
+          integration.
+      open_hardware:
+        met: false
+        reason: No schematics or PCB design files are published.
+    sources:
+      - https://www.home-assistant.io/integrations/enphase_envoy/
+    last_reviewed: "2026-10"
+
+  # ====================== String / hybrid / off-grid =======================
+
+  - name: Fronius Primo GEN24 / Symo GEN24
+    manufacturer: Fronius
+    models: Primo GEN24 (Plus), Symo GEN24 (Plus)
+    power: 3–10 kW
+    balcony: false
+    ha_docs:
+      - title: Home Assistant core integration
+        url: https://www.home-assistant.io/integrations/fronius/
+    criteria:
+      local_operation:
+        met: true
+        reason: Commissioning and configuration via the inverter's local web interface; Solar.web is optional.
+      open_interface:
+        met: true
+        reason: Fronius Solar API (local JSON/HTTP) and Modbus TCP (SunSpec), both documented by the vendor.
+      open_hardware:
+        met: false
+        reason: No schematics or PCB design files are published.
+    notes: >-
+      Fronius devices are among the most frequently found inverter interfaces exposed to the internet
+      (Forescout, 2025) – never port-forward the web UI.
+    sources:
+      - https://www.home-assistant.io/integrations/fronius/
+      - https://www.securityweek.com/35000-solar-power-systems-exposed-to-internet/
+    last_reviewed: "2026-10"
+
+  - name: SMA Sunny Boy / Sunny Tripower
+    manufacturer: SMA Solar Technology
+    models: Sunny Boy 1.5–6.0, Sunny Tripower 3.0–10.0 (Webconnect/Speedwire generation)
+    power: 1.5–10 kW
+    balcony: false
+    ha_docs:
+      - title: Home Assistant core integration
+        url: https://www.home-assistant.io/integrations/sma/
+    criteria:
+      local_operation:
+        met: true
+        reason: Commissioning and configuration via the local web interface; Sunny Portal is optional.
+      open_interface:
+        met: true
+        reason: Webconnect/Speedwire (Home Assistant core) and vendor-documented Modbus TCP (SunSpec).
+      open_hardware:
+        met: false
+        reason: No schematics or PCB design files are published.
+    notes: >-
+      The SMA vulnerability disclosed in SUN:DOWN (2025) affected the Sunny Portal cloud, not the
+      inverters – another argument for local operation.
+    sources:
+      - https://www.home-assistant.io/integrations/sma/
+      - https://thehackernews.com/2025/03/researchers-uncover-46-critical-flaws.html
+    last_reviewed: "2026-10"
+
+  - name: KOSTAL PLENTICORE plus
+    manufacturer: KOSTAL Solar Electric
+    models: PLENTICORE plus 3.0–10 (PLENTICORE G3 also supported by the integration)
+    power: 3–10 kW
+    balcony: false
+    ha_docs:
+      - title: Home Assistant core integration
+        url: https://www.home-assistant.io/integrations/kostal_plenticore/
+    criteria:
+      local_operation:
+        met: true
+        reason: Configuration via the local web interface; KOSTAL Solar Portal is optional.
+      open_interface:
+        met: true
+        reason: Local REST API and Modbus TCP (SunSpec); Home Assistant core integration.
+      open_hardware:
+        met: false
+        reason: No schematics or PCB design files are published.
+    sources:
+      - https://www.home-assistant.io/integrations/kostal_plenticore/
+    last_reviewed: "2026-10"
+
+  - name: GoodWe ET / EH / DNS series
+    manufacturer: GoodWe
+    models: ET, EH, BT, BH, ES, DNS, DT and others
+    power: 3–10 kW (residential)
+    balcony: false
+    ha_docs:
+      - title: Home Assistant core integration
+        url: https://www.home-assistant.io/integrations/goodwe/
+    criteria:
+      local_operation:
+        met: true
+        reason: >-
+          Commissioning via the SolarGo app over a direct local connection; the SEMS portal is optional.
+      open_interface:
+        met: true
+        reason: Local UDP/Modbus protocol, supported by a Home Assistant core integration.
+      open_hardware:
+        met: false
+        reason: No schematics or PCB design files are published.
+    caveats:
+      - >-
+        Some newer communication modules changed the local protocol – check the integration docs for
+        compatibility before buying.
+    sources:
+      - https://www.home-assistant.io/integrations/goodwe/
+    last_reviewed: "2026-10"
+
+  - name: Huawei SUN2000 (residential)
+    manufacturer: Huawei
+    models: SUN2000-2…6KTL-L1, SUN2000-3…10KTL-M1
+    power: 2–10 kW
+    balcony: false
+    ha_docs:
+      - title: huawei_solar
+        url: https://github.com/wlcrs/huawei_solar
+    criteria:
+      local_operation:
+        met: true
+        reason: >-
+          Inverter and SDongle operate without the FusionSolar cloud; settings can be changed over a direct
+          local app connection or via Modbus.
+      open_interface:
+        met: true
+        reason: >-
+          Modbus RTU (RS485) and Modbus TCP (SDongle / inverter Wi-Fi); register definitions are published
+          by Huawei; mature Home Assistant custom integration.
+      open_hardware:
+        met: false
+        reason: No schematics or PCB design files are published.
+    caveats:
+      - >-
+        Modbus TCP is disabled by default and must be enabled in the installer settings; installers
+        usually register the plant in FusionSolar – ask for local-only commissioning.
+    sources:
+      - https://github.com/wlcrs/huawei_solar
+    last_reviewed: "2026-10"
+
+  - name: SolarEdge HD-Wave / Home Hub
+    manufacturer: SolarEdge
+    models: SE2200H…SE6000H, SE3K…SE10K, Home Hub (SExK-RWB)
+    power: 2–10 kW (residential)
+    balcony: false
+    ha_docs:
+      - title: solaredge-modbus-multi
+        url: https://github.com/WillCodeForCats/solaredge-modbus-multi
+    criteria:
+      local_operation:
+        met: true
+        reason: The inverter keeps producing and can be read and controlled locally via Modbus TCP without the monitoring portal.
+      open_interface:
+        met: true
+        reason: >-
+          Vendor-documented Modbus TCP (SunSpec). Note: the Home Assistant core "SolarEdge" integration
+          uses the cloud API – use the Modbus integration instead.
+      open_hardware:
+        met: false
+        reason: No schematics or PCB design files are published.
+    caveats:
+      - Commissioning and enabling Modbus TCP are done with the SetApp, which requires a SolarEdge account.
+    sources:
+      - https://github.com/WillCodeForCats/solaredge-modbus-multi
+    last_reviewed: "2026-10"
+
+  - name: Sungrow SH-RS / SH-RT hybrid
+    manufacturer: Sungrow
+    models: SH3.0RS…SH6.0RS, SH5.0RT…SH10RT (with WiNet-S)
+    power: 3–10 kW
+    balcony: false
+    ha_docs:
+      - title: Sungrow SHx Modbus for Home Assistant
+        url: https://github.com/mkaiser/Sungrow-SHx-Inverter-Modbus-Home-Assistant
+    criteria:
+      local_operation:
+        met: true
+        reason: Local access via the iSolarCloud app's direct connection and Modbus; the cloud is optional.
+      open_interface:
+        met: true
+        reason: Modbus TCP via the WiNet-S dongle (or LAN/RS485) with a published register map.
+      open_hardware:
+        met: false
+        reason: No schematics or PCB design files are published.
+    caveats:
+      - >-
+        The WiNet-S dongle and the cloud were affected by serious vulnerabilities (SUN:DOWN, 2025, since
+        patched) – keep firmware current and isolate the dongle.
+    sources:
+      - https://github.com/mkaiser/Sungrow-SHx-Inverter-Modbus-Home-Assistant
+      - https://www.forescout.com/blog/grid-security-new-vulnerabilities-in-solar-power-systems-exposed/
+    last_reviewed: "2026-10"
+
+  - name: Growatt MIN / MOD TL-X
+    manufacturer: Growatt
+    models: MIN 2500–6000TL-X(H), MOD 3–15KTL3-X(H)
+    power: 2.5–15 kW
+    balcony: false
+    ha_docs:
+      - title: Grott
+        url: https://github.com/johanmeijer/grott
+      - title: ESPHome growatt_solar
+        url: https://esphome.io/components/sensor/growatt_solar/
+      - title: homeassistant-solax-modbus
+        url: https://github.com/wills106/homeassistant-solax-modbus
+    criteria:
+      local_operation:
+        met: true
+        reason: Operates without ShineServer; configuration via display and local RS485/Modbus.
+      open_interface:
+        met: true
+        reason: >-
+          Growatt's Modbus RTU protocol documentation is publicly available; Grott intercepts
+          ShineWiFi/ShineLAN traffic locally; ESPHome has a native Growatt component.
+      open_hardware:
+        met: false
+        reason: No schematics or PCB design files are published.
+    notes: >-
+      Growatt's cloud was affected by account-takeover vulnerabilities (SUN:DOWN, 2025) – keeping the
+      inverter off the cloud is strongly recommended.
+    sources:
+      - https://github.com/johanmeijer/grott
+      - https://www.forescout.com/blog/grid-security-new-vulnerabilities-in-solar-power-systems-exposed/
+    last_reviewed: "2026-10"
+
+  - name: Deye hybrid SG04LP3 series
+    manufacturer: Deye
+    models: SUN-5K…12K-SG04LP3-EU; related models sold under other brands (e.g. Sunsynk)
+    power: 5–12 kW
+    balcony: false
+    ha_docs:
+      - title: ha-solarman
+        url: https://github.com/davidrapan/ha-solarman
+    criteria:
+      local_operation:
+        met: true
+        reason: All settings are available on the device display and via local Modbus; the cloud is optional.
+      open_interface:
+        met: true
+        reason: Solarman V5 (TCP 8899) via the logger, or Modbus RTU via RS485 (e.g. ESPHome bridge).
+      open_hardware:
+        met: false
+        reason: No schematics or PCB design files are published.
+    caveats:
+      - >-
+        Some newer models ship with Deye's own logger, which may not support local Solarman V5 access –
+        use RS485/Modbus instead.
+    notes: See the November 2024 deactivation incident under "Background reading".
+    sources:
+      - https://github.com/davidrapan/ha-solarman
+      - https://community.home-assistant.io/t/deye-cloud-integration/813153
+      - https://heise.de/-10183716
+    last_reviewed: "2026-10"
+
+  - name: Solis S6 / RHI series
+    manufacturer: Ginlong Solis
+    models: S6 string inverters, RHI hybrid inverters
+    power: ≈1–10 kW (residential)
+    balcony: false
+    ha_docs:
+      - title: homeassistant-solax-modbus
+        url: https://github.com/wills106/homeassistant-solax-modbus
+      - title: ha-solarman
+        url: https://github.com/davidrapan/ha-solarman
+    criteria:
+      local_operation:
+        met: true
+        reason: Configuration via the device display and local Modbus; SolisCloud is optional.
+      open_interface:
+        met: true
+        reason: Modbus RTU via the RS485/COM port; Solarman-based loggers via Solarman V5.
+      open_hardware:
+        met: false
+        reason: No schematics or PCB design files are published.
+    sources:
+      - https://github.com/wills106/homeassistant-solax-modbus
+    last_reviewed: "2026-10"
+
+  - name: Fox ESS H1 / H3 hybrid
+    manufacturer: Fox ESS
+    models: H1 (single-phase), H3 (three-phase)
+    power: 3–12 kW
+    balcony: false
+    ha_docs:
+      - title: foxess_modbus
+        url: https://github.com/nathanmarlor/foxess_modbus
+    criteria:
+      local_operation:
+        met: true
+        reason: Configuration via the display and local Modbus; Fox ESS Cloud is optional.
+      open_interface:
+        met: true
+        reason: Modbus via RS485 or the LAN port; Home Assistant custom integration with read and write support.
+      open_hardware:
+        met: false
+        reason: No schematics or PCB design files are published.
+    sources:
+      - https://github.com/nathanmarlor/foxess_modbus
+    last_reviewed: "2026-10"
+
+  - name: SolaX X1 / X3 Hybrid
+    manufacturer: SolaX Power
+    models: X1-Hybrid, X3-Hybrid (G3/G4)
+    power: 3–15 kW
+    balcony: false
+    ha_docs:
+      - title: Home Assistant core integration
+        url: https://www.home-assistant.io/integrations/solax/
+      - title: homeassistant-solax-modbus
+        url: https://github.com/wills106/homeassistant-solax-modbus
+    criteria:
+      local_operation:
+        met: true
+        reason: Configuration via the display and local interfaces; SolaX Cloud is optional.
+      open_interface:
+        met: true
+        reason: Local API of the Pocket Wi-Fi dongle (core integration) and Modbus RTU/TCP.
+      open_hardware:
+        met: false
+        reason: No schematics or PCB design files are published.
+    sources:
+      - https://www.home-assistant.io/integrations/solax/
+      - https://github.com/wills106/homeassistant-solax-modbus
+    last_reviewed: "2026-10"
+
+  - name: Victron MultiPlus-II with GX device
+    manufacturer: Victron Energy
+    models: MultiPlus-II, Quattro-II with Cerbo GX / Ekrano GX
+    power: 3–15 kVA
+    balcony: false
+    ha_docs:
+      - title: hass-victron
+        url: https://github.com/sfstar/hass-victron
+    criteria:
+      local_operation:
+        met: true
+        reason: >-
+          Configuration via VictronConnect (Bluetooth/USB, no account) and the GX device's local
+          interface; the VRM portal is optional.
+      open_interface:
+        met: true
+        reason: Vendor-documented Modbus TCP and MQTT on the GX device; Home Assistant custom integration.
+      open_hardware:
+        met: false
+        reason: No schematics or PCB design files are published.
+    notes: >-
+      Venus OS, the software on GX devices, is open source – a plus for transparency, but open
+      software does not earn the open-hardware star.
+    sources:
+      - https://github.com/sfstar/hass-victron
+    last_reviewed: "2026-10"
+
+  - name: Voltronic Axpert / MPP Solar (off-grid)
+    manufacturer: Voltronic Power
+    models: Axpert / PIP / LV series; rebranded as MPP Solar, EASun and others
+    power: ≈1–11 kW
+    balcony: false
+    ha_docs:
+      - title: ESPHome pipsolar
+        url: https://esphome.io/components/pipsolar/
+      - title: mpp-solar
+        url: https://github.com/jblance/mpp-solar
+    criteria:
+      local_operation:
+        met: true
+        reason: No cloud component required at all; the optional Wi-Fi stick can simply be left out.
+      open_interface:
+        met: true
+        reason: Serial protocol (RS232/USB) publicly documented and widely implemented (ESPHome, mpp-solar).
+      open_hardware:
+        met: false
+        reason: No schematics or PCB design files are published.
+    sources:
+      - https://esphome.io/components/pipsolar/
+      - https://github.com/jblance/mpp-solar
+    last_reviewed: "2026-10"
+
+  # ================= Plug-in storage with integrated inverter ==============
+
+  - name: Zendure SolarFlow 800 / 2400 AC
+    manufacturer: Zendure
+    models: SolarFlow 800, 800 Plus, 800 Pro, 2400 AC/Pro
+    power: 0.8–2.4 kW
+    balcony: true
+    ha_docs:
+      - title: Zendure-HA-zenSDK
+        url: https://github.com/Gielz1986/Zendure-HA-zenSDK
+      - title: Zendure-HA
+        url: https://github.com/zendure/zendure-ha
+    criteria:
+      local_operation:
+        met: true
+        reason: >-
+          Once the local API is enabled, the device is monitored and controlled entirely over the LAN and
+          keeps working when the internet or the Zendure cloud is unavailable.
+      open_interface:
+        met: true
+        reason: Official local HTTP API (zenSDK) with community and vendor Home Assistant integrations.
+      open_hardware:
+        met: false
+        reason: No schematics or PCB design files are published.
+    caveats:
+      - >-
+        The local API is off by default (EN 18031) and must be enabled once in the Zendure app (account
+        required).
+      - Older models (Hyper 2000, Hub 1200/2000, Ace 1500) have no local API and are not covered by this rating.
+    sources:
+      - https://community.home-assistant.io/t/zendure-restapi-local-zero-export-control-for-solarflow-batteries/1029076
+      - https://github.com/Gielz1986/Zendure-HA-zenSDK
+      - https://pypi.org/project/zendure/
+    last_reviewed: "2026-10"
+
+  - name: Marstek Venus E / A / D
+    manufacturer: Marstek
+    models: Venus E (v2/v3), Venus A, Venus D
+    power: up to 2.5 kW (can be limited to 0.8 kW)
+    balcony: true
+    ha_docs:
+      - title: marstek_venus_modbus
+        url: https://github.com/ViperRNMC/marstek_venus_modbus
+      - title: ha-marstek-local-api
+        url: https://github.com/jaapp/ha-marstek-local-api/
+    criteria:
+      local_operation:
+        met: true
+        reason: >-
+          Monitored and controlled over local Modbus (RS485 adapter, or Ethernet on newer models) without a
+          Marstek account; community web apps replace the vendor app.
+      open_interface:
+        met: true
+        reason: Modbus RTU/TCP plus an official local "Open API" (UDP); several Home Assistant integrations.
+      open_hardware:
+        met: false
+        reason: No schematics or PCB design files are published.
+    caveats:
+      - The official Open API must be enabled via the Marstek app or the Venus Monitor tool.
+    sources:
+      - https://github.com/ViperRNMC/marstek_venus_modbus
+      - https://github.com/jaapp/ha-marstek-local-api/
+      - https://community.simon42.com/t/marstek-modbus-suite-integration-mit-fancy-dashboard/92316
+    last_reviewed: "2026-10"
+
+  - name: Anker SOLIX Solarbank 2 / 3
+    manufacturer: Anker
+    models: Solarbank 2 (E1600 Pro/Plus), Solarbank 3 (E2700 Pro)
+    power: 0.8 kW AC (DE setting)
+    balcony: true
+    ha_docs:
+      - title: ha-anker-solix (cloud API)
+        url: https://github.com/thomluther/ha-anker-solix
+    criteria:
+      local_operation:
+        met: false
+        reason: Setup and configuration require the Anker app and an Anker account.
+      open_interface:
+        met: false
+        reason: >-
+          The available Home Assistant integration uses Anker's cloud API (and Anker's MQTT server);
+          no local interface is known for these models.
+      open_hardware:
+        met: false
+        reason: No schematics or PCB design files are published.
+    needs_review: true
+    notes: >-
+      Newer models (Solarbank Max AC, Solarbank 4 E5000 Pro) support local Modbus TCP through an official
+      Anker integration (github.com/anker-charging/ha-anker-solix-official) – not yet rated, help wanted!
+    sources:
+      - https://github.com/thomluther/ha-anker-solix
+      - https://github.com/anker-charging/ha-anker-solix-official/releases
+    last_reviewed: "2026-10"
+
+  - name: EcoFlow PowerStream
+    manufacturer: EcoFlow
+    models: PowerStream 600 W / 800 W
+    power: 0.6–0.8 kW
+    balcony: true
+    ha_docs:
+      - title: hassio-ecoflow-cloud (cloud API)
+        url: https://github.com/tolwi/hassio-ecoflow-cloud
+    criteria:
+      local_operation:
+        met: false
+        reason: >-
+          Changing the base-load/output setting requires the cloud; without internet the device stays at
+          its last setting.
+      open_interface:
+        met: false
+        reason: >-
+          Official and common community integrations use the EcoFlow cloud. A community Bluetooth-to-MQTT
+          bridge for local control appeared in 2026 and still needs evaluation.
+      open_hardware:
+        met: false
+        reason: No schematics or PCB design files are published.
+    needs_review: true
+    sources:
+      - https://github.com/tolwi/hassio-ecoflow-cloud/discussions/414
+    last_reviewed: "2026-10"
