@@ -531,12 +531,15 @@ Every rating is backed by a rationale per criterion and public sources. These se
 ## Open source hardware projects
 
 > [!WARNING]
-> These are experimental hobby projects. They are **not certified** for grid connection (e.g. VDE-AR-N 4105) and must never be connected to the public grid. Mains voltage is lethal. They are listed – without a rating – because they show what an open inverter could look like.
+> These are experimental projects. They are **not certified** for grid connection (e.g. VDE-AR-N 4105) and must never be connected to the public grid. Mains voltage is lethal. They are listed – without a rating – because they show what an open inverter could look like.
 
-- [OSSI – Open Source Solar Inverter](https://github.com/pumbaba/OSSI) - Aims to build a solar inverter from commonly available parts with fully open software, hardware and mechanics. Early stage (requirements).
+- [uVerter by OwnTech](https://github.com/owntech-foundation/micro-inverter) - Community-built open source PV micro-inverter (450 VA target, CERN-OHL-S-2.0) designed for repairability and local-first monitoring without a proprietary cloud.
+- [OpenBattery Hybrid Inverter](https://git.tu-berlin.de/OpenBattery/hybrid-inverter) - Open source hybrid inverter (PV + battery) developed at TU Berlin.
+- [SolarInvert SOL2600-60-NA](https://github.com/SolarInvert-GmbH/inverter_models) - German manufacturer publishing assembly references and build instructions for its grid-tie inverter (power board, control board, grid inspector, toroidal transformer, housing, wiring) plus an MIT-licensed Modbus library - work in progress.
+- [opENS](https://gitlab.com/ietr.syensces/opens) - Open source connected inverter from ENS Rennes (IETR / SATIE-CNRS) used as a smart-grid research platform, where networked inverters emulate power plants, consumers or storage.
+- [OSSI – Open Source Solar Inverter](https://github.com/transistorgrab/OSSI) - Aims to build a solar inverter from commonly available parts with fully open software, hardware and mechanics. Early stage (requirements).
 - [Grid Tie Inverter v3](https://github.com/fotherja/Grid_Tie_Inverter_3) - STM32-based grid-tie inverter with KiCad PCB files and firmware under the MIT license.
 - [openMicroInverter](https://github.com/kikiloaw/openMicroInverter) - Open hardware platform for experimenting with DC-to-AC conversion, energy metering and grid synchronisation.
-- [Libre Solar](https://libre.solar) - Open hardware MPPT charge controllers and battery management systems for the DC side – not an inverter, but a good example of mature open power electronics.
 
 ## Tools for local operation
 
@@ -569,8 +572,6 @@ Every rating is backed by a rationale per criterion and public sources. These se
 - [SUN:DOWN – Forescout Vedere Labs (2025)](https://www.forescout.com/blog/grid-security-new-vulnerabilities-in-solar-power-systems-exposed/) - 46 new vulnerabilities in Sungrow, Growatt and SMA products and grid-level attack scenarios.
 - [Deactivated Deye and Sol-Ark inverters in the USA – heise online (2024)](https://heise.de/-10183716) - Statements from Deye and Sol-Ark on the November 2024 incident.
 - [Deye deactivates solar inverters in USA, UK and Pakistan – Born's Tech and Windows World (2024)](https://borncity.com/win/2024/11/28/deye-deactivates-solar-inverters-in-usa-uk-and-pakistan/) - Timeline and background of the deactivations.
-- [35,000 solar power systems exposed to internet – SecurityWeek (2025)](https://www.securityweek.com/35000-solar-power-systems-exposed-to-internet/) - Which inverter management interfaces are reachable from the internet.
-- [Deye – Consumer Rights Wiki](https://wiki.rossmanngroup.com/wiki/Deye) - Consumer-rights perspective on remotely disabled inverters.
 
 ## Contributing
 
