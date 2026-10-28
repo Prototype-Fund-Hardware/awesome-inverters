@@ -134,6 +134,8 @@ Every rating is backed by a rationale per criterion and public sources. These se
 ⚠️ **Caveats:**
 - The integrated Wi-Fi logger has had security weaknesses (e.g. readable access credentials) – change the access-point password and isolate the device in its own network.
 
+**Notes:** In November 2024, Deye-branded (hybrid) inverters in the USA, the UK, Pakistan and other countries stopped working; Deye attributed this to a built-in authorization check and denied remote control. Not specific to microinverters, but a strong argument for keeping inverters off the vendor cloud.
+
 **Sources:** [davidrapan/ha-solarman](https://github.com/davidrapan/ha-solarman) · [borncity.com](https://borncity.com/blog/?p=286806) · [heise.de](https://heise.de/-10183716)
 
 <sub>Last reviewed: 2026-10</sub>
