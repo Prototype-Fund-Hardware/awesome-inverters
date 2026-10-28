@@ -2,7 +2,7 @@
 
 > A curated, community-maintained list of solar inverters, rated by how well they can be run **data-sovereign**: locally, without a vendor cloud, through open interfaces – and ideally on open hardware.
 
-An inverter knows when you produce and consume energy, and therefore a lot about your daily life. If it is connected to a vendor cloud, it can also be reconfigured – or switched off – from outside. In November 2024, Deye inverters in the USA, the UK, Pakistan and other countries suddenly stopped working; Deye denied any remote control and blamed a built-in authorization check ([heise online](https://heise.de/-10183716)). In 2025, security researchers disclosed 46 new vulnerabilities in products from Sungrow, Growatt and SMA, most of them in cloud backends and monitoring components ([Forescout SUN:DOWN](https://www.forescout.com/blog/grid-security-new-vulnerabilities-in-solar-power-systems-exposed/)).
+An inverter knows when you produce and consume energy, and therefore a lot about your daily life. If it is connected to a vendor cloud, it can also be reconfigured – or switched off – from outside. In 2025, security researchers disclosed 46 new vulnerabilities in products from Sungrow, Growatt and SMA, most of them in cloud backends and monitoring components ([Forescout SUN:DOWN](https://www.forescout.com/blog/grid-security-new-vulnerabilities-in-solar-power-systems-exposed/)).
 
 The good news: many inverters work perfectly well without any cloud. But that knowledge is scattered across forums, GitHub issues and wikis. This list brings it together, applies **transparent, verifiable criteria** and makes it easy for everyone to contribute.
 
