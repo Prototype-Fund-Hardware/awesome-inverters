@@ -561,9 +561,7 @@ Every rating is backed by a rationale per criterion and public sources. These se
 - **Separate network.** Put inverters, data loggers and gateways into their own VLAN or guest network and block their internet access at the router or firewall.
 - **Change default passwords.** Several inverters and loggers ship with weak or well-known Wi-Fi access-point credentials.
 - **Disable cloud uploads.** Use the device's own switch where available (e.g. the server setting of Solarman loggers, the cloud toggle of tsun-gen3-proxy).
-- **Never port-forward.** Do not expose inverter web interfaces or Modbus ports to the internet; use a VPN or your home-automation system for remote access.
-- **Write carefully.** Prefer read-only access. Do not write power limits every few seconds – many inverters store them in EEPROM/flash with limited write cycles.
-- **Leave grid protection alone.** Country codes and voltage/frequency limits belong to the grid certification (e.g. VDE-AR-N 4105) and must not be changed.
+- **Never port-forward.** Do not expose inverter web interfaces or Modbus ports to the internet. Use a VPN or your home-automation system for remote access.
 - **Plan firmware updates.** Prefer local update paths. If updates need the cloud, allow internet access temporarily and deliberately.
 - **Check warranty terms.** Some vendors tie their warranty to cloud monitoring.
 
